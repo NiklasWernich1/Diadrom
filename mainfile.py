@@ -1,6 +1,4 @@
 import pandas as pd
-import math
-import openpyxl
 from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
