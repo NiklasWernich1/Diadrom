@@ -8,6 +8,7 @@ from fuzzywuzzy import fuzz
 import sys
 from PyQt5.QtWidgets import QApplication, QDialog, QTableView, QVBoxLayout, QDialogButtonBox, QHeaderView
 from PyQt5.QtCore import Qt, QAbstractTableModel
+import os
 
 
 
@@ -17,9 +18,9 @@ def VCC_or_AB():
     VCC = input("Is it postings for VCC -> y \nIs it postings for Volvo AB -> n: ")
     if (VCC == 'y' or VCC == 'n'):
         if VCC == 'y':
-            return 'Job Posting Title', 'All_VCC_Postings.xlsx'
+            return 'Job Posting Title'
         else :
-            return 'Title', 'ALL_AB_Volvo_Postings.xlsx'
+            return 'Title'
     else :
         return VCC_or_AB()
 
@@ -137,14 +138,28 @@ def threshold_get_groups(df_freq, th):
         print(f"Threshold value remains: {new_threshold}")
         return groups, series
 
+def input_valid_file_path():
+    while True:
+        file_path = input('insert path like \nC:/Users/NiklasWernich/OneDrive - Diadrom Holding AB/Dokument/ALL_AB_Volvo_Postings.xlsx \n')
+
+        if os.path.exists(file_path):
+            return file_path
+        else:
+            print("The specified file path does not exist. Please provide a valid path.")
+
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 
     # ... (same code to create the DataFrame) ...
-    title, path2 = VCC_or_AB()
+    title = VCC_or_AB()
+
+    path1 = input_valid_file_path()
 
     #insert path   ,   file_name.xlsx
-    xlsx_file = Path('C:/Users/NiklasWernich/OneDrive - Diadrom Holding AB/Dokument', path2)
+    xlsx_file = Path(path1)
+    # 'All_VCC_Postings.xlsx'
+    # 'ALL_AB_Volvo_Postings.xlsx'
     df = pd.read_excel(xlsx_file, index_col=0)
 
     #ALL_AB_Volvo_Postings.xlsx
