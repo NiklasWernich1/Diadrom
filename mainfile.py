@@ -17,9 +17,9 @@ def VCC_or_AB():
     VCC = input("Is it postings for VCC -> y \nIs it postings for Volvo AB -> n: ")
     if (VCC == 'y' or VCC == 'n'):
         if VCC == 'y':
-            return 'Job Posting Title', 'All_VCC_Postings.xlsx'
+            return 'Job Posting Title'
         else :
-            return 'Title', 'ALL_AB_Volvo_Postings.xlsx'
+            return 'Title'
     else :
         return VCC_or_AB()
 
@@ -141,10 +141,14 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
 
     # ... (same code to create the DataFrame) ...
-    title, path2 = VCC_or_AB()
+    title = VCC_or_AB()
+
+    path1 = input('insert path like \nC:/Users/NiklasWernich/OneDrive - Diadrom Holding AB/Dokument/ALL_AB_Volvo_Postings.xlsx \n')
 
     #insert path   ,   file_name.xlsx
-    xlsx_file = Path('C:/Users/NiklasWernich/OneDrive - Diadrom Holding AB/Dokument', path2)
+    xlsx_file = Path(path1)
+    # 'All_VCC_Postings.xlsx'
+    # 'ALL_AB_Volvo_Postings.xlsx'
     df = pd.read_excel(xlsx_file, index_col=0)
 
     #ALL_AB_Volvo_Postings.xlsx
