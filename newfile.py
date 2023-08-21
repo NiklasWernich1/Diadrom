@@ -4,14 +4,58 @@ import openpyxl
 from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import linear_kernel
+from fuzzywuzzy import fuzz
+import sys
+from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget, QHeaderView
 
 ######################
-#what job you want to search for
-matchers = ['Application Developer Specialist IT','Application Operation Specialist','Data Analyst']
+# Making sure yes or no is provided.
+# second value in return tuple might need to change
+def VCC_or_AB():
+    VCC = input("Is it postings for VCC -> y \nIs it postings for Volvo AB -> n: ")
+    if (VCC == 'y' or VCC == 'n'):
+        if VCC == 'y':
+            return 'Job Posting Title', 'All_VCC_Postings.xlsx'
+        else :
+            return 'Title', 'ALL_AB_Volvo_Postings.xlsx'
+    else :
+        return VCC_or_AB()
+
+
+def is_double(value):
+    return isinstance(value, float)
+
+def get_double_input():
+    while True:
+        user_input = input("Enter a threshold (between 0 and 1) for likeness of job titles: ")
+        try:
+            user_input = float(user_input)
+            if is_double(user_input) and 0 <= user_input <= 1:
+                return user_input
+            else:
+                print("Input must be a double between 0 and 1.")
+        except ValueError:
+            print("Invalid input. Please enter a valid double.")
+
+
+
+
+# As of now, the files have the titles of projects as in loop below
+# might change in future
+
+title, path2 = VCC_or_AB()
 
 #insert path   ,   file_name.xlsx
-xlsx_file = Path('C:/Users/NiklasWernich/OneDrive - Diadrom Holding AB/Dokument', 'AL_AB_Volvo_Postings.xlsx')
+xlsx_file = Path('C:/Users/NiklasWernich/OneDrive - Diadrom Holding AB/Dokument', path2)
 df = pd.read_excel(xlsx_file, index_col=0)
+
+#ALL_AB_Volvo_Postings.xlsx
+
+#All_VCC_Postings.xlsx
+#######################################
+
 #print(df)
 df.columns = df.iloc[0]
 #remove first row from DataFrame
@@ -22,34 +66,26 @@ df['Job Posting Submit Date'] = pd.to_datetime(df['Job Posting Submit Date'])
 df = df.set_index(df['Job Posting Submit Date'])
 df = df.sort_index()
 #print(df)
-df = df.dropna()
-# Printing dataframe
-#print(df)
+df = df.dropna(how='all')
+
 #distinct titles only
-df_dist = df.drop_duplicates(subset = ['Title'])
+df_dist = df.drop_duplicates(subset = [title])
 #print(df_dist)
 #new column with year
 df['year'] = df['Job Posting Submit Date'].dt.year
 #print(df)
 
-df_freq = df.pivot_table(index = ['Title'], columns=['year'], aggfunc ='size')
+df_freq = df.pivot_table(index = [title], columns=['year'], aggfunc ='size')
 df_freq = df_freq.fillna(0)
 df_freq
 
-import pandas as pd
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import linear_kernel
-from fuzzywuzzy import fuzz
+
 
 # Sample data
 data = df_freq.index
 
 # Create a pandas Series
 series = pd.Series(data)
-
-# Calculate Levenshtein distance similarity
-def levenshtein_similarity(a, b):
-    return 1 - (fuzz.distance(a, b) / max(len(a), len(b)))
 
 # Convert series to a matrix of TF-IDF features
 tfidf_vectorizer = TfidfVectorizer(analyzer='char', ngram_range=(2, 3))
@@ -59,12 +95,13 @@ tfidf_matrix = tfidf_vectorizer.fit_transform(series)
 cosine_similarities = linear_kernel(tfidf_matrix, tfidf_matrix)
 
 # Group similar strings
+th = get_double_input()
 threshold = 0.55  # Adjust this threshold as needed
 groups = {}
 for i, title in enumerate(series):
     group_idx = None
     for idx, group in groups.items():
-        if any(cosine_similarities[i, j] > threshold for j in group):
+        if any(cosine_similarities[i, j] > th for j in group):
             group_idx = idx
             break
     if group_idx is None:
@@ -88,3 +125,4 @@ for wanted in x:
     df_freq.iloc[indices].plot(ax=axes[1], kind='bar')
     #plt.title(k)
 plt.show()
+
