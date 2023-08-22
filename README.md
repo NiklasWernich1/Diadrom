@@ -1,6 +1,21 @@
 # Diadrom
-`Python version 3.10.8` was used when developing this project.
 
-Run `pip install -r requirements.txt`
+Brief description of your project.
 
-Run `python mainfile.py`
+## Installation
+
+1. Clone this repository:
+
+   ```bash
+   git clone https://github.com/NiklasWernich1/Diadrom.git
+   ```
+
+2. Navigate to the project directory:
+    ```bash
+   cd Diadrom
+   ```
+
+3. Install the required packages using pip:
+    ```bash
+   pip install -r requirements.txt
+   ```
