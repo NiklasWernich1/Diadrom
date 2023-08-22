@@ -1,6 +1,6 @@
 # Diadrom
 
-A brief description of your project.
+Python used: 3.10.11
 
 ## Table of Contents
 
