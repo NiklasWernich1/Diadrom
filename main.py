@@ -17,4 +17,3 @@ if __name__ == "__main__":
     x = get_group_input()
     display_group_charts(x, groups, series, df_freq)
     app.quit()
-    # sys.exit(app.exec_())
