@@ -2,6 +2,8 @@
 
 Python used: 3.10.11
 
+This repository is made for a generalized way of making data analysis on xlsx (excel) sheets. They are meant to be about VCC or V AB. These sheets should be in a local directory like `C:/Users/User/Dokument/file.xlsx`
+
 ## Table of Contents
 
 - [Installation](#installation)
